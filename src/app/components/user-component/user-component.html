@@ -1,0 +1,97 @@
+<div class="container">
+  <h2>User Management Dashboard</h2>
+
+  @if(errorMessage()){
+  <div class="toast-notification">
+    <span>{{errorMessage()}}</span>
+  </div>
+  }
+
+  @if(isLoading()){
+  <div class="loader-overlay">
+    <div class="spinner-box">
+      <div class="spinner"></div>
+    </div>
+    <div class="ticket-wrap">
+      <div class="ticket-text">
+        <span>Data loading, Please wait........Processing your data.</span>
+      </div>
+    </div>
+  </div>
+  }
+
+  <div class="form-container">
+    <h3>{{isEditing() ? 'Edit Existing User':'Add New User'}}</h3>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="userForm().name" name="name" required placeholder="Enter full name" />
+      </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" [(ngModel)]="userForm().email" name="email" required placeholder="Enter email address" />
+      </div>
+      <input type="hidden" [(ngModel)]="userForm().username" name="username" required />
+      <input type="hidden" [(ngModel)]="userForm().address" name="address" required />
+      <input type="hidden" [(ngModel)]="userForm().phone" name="phone" required />
+      <input type="hidden" [(ngModel)]="userForm().website" name="website" required />
+      <input type="hidden" [(ngModel)]="userForm().company" name="company" required />
+
+
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="isLoading()">
+          {{isEditing() ? 'Update' : 'Save'}}
+        </button>
+        @if(isEditing()){
+        <button type="button" class="btn-cancel" (click)="resetForm()">Cancel</button>
+        }
+      </div>
+
+      @if(!isLoading()){
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Username</th>
+
+              <th>Address</th>
+              <th>Contact</th>
+              <th>Website</th>
+              <th>Company</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(user of users(); track user.id){
+            <tr>
+              <td>{{user.id}}</td>
+              <td>{{user.name}}</td>
+              <td>{{user.email}}</td>
+              <td>{{user.username|| '⌛Verifying...'}}</td>
+              <td>{{user.address?.city|| '⌛Verifying...'}}</td>
+              <td>{{user.phone || '⌛Verifying...'}}</td>
+              <td>{{user.website || '⌛Verifying...'}}</td>
+              <td>{{user.company?.name || '⌛Verifying...'}}</td>
+              <td>
+                <button class="btn-edit" (click)="editUser(user)">Edit</button>
+                <button class="btn-delete" (click)="deleteUser(user.id)">Delete</button>
+              </td>
+            </tr>
+            }@empty {
+            @if(!isLoading()){
+            <tr>
+              <td colspan="4" class="no-data">No active users found.</td>
+            </tr>
+            }
+            }
+          </tbody>
+        </table>
+
+      </div>}
+    </form>
+  </div>
+</div>
